@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VIZU Studio - Современная Визуализация</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Mono:wght@700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0f0f0f;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+
+        /* Градиентный фон с анимацией */
+        .gradient-bg {
+            background: radial-gradient(circle at 20% 50%, rgba(255, 0, 110, 0.15) 0%, transparent 50%), 
+                        radial-gradient(circle at 80% 80%, rgba(0, 217, 255, 0.15) 0%, transparent 50%),
+                        linear-gradient(135deg, #0f0f0f 0%, #1a1a2e 50%, #0f0f0f 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .gradient-bg::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                radial-gradient(circle, rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+            background-size: 40px 40px;
+            background-position: 0 0;
+            pointer-events: none;
+            animation: drift 20s linear infinite;
+        }
+
+        @keyframes drift {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(40px, 40px); }
+        }
+
+        .gradient-orb {
+            position: absolute;
+            border-radius: 50%;
+            mix-blend-mode: screen;
+            opacity: 0.1;
+            animation: float 20s infinite ease-in-out;
+        }
+
+        .orb-1 { width: 300px; height: 300px; background: #ff006e; top: -100px; left: -100px; }
+        .orb-2 { width: 200px; height: 200px; background: #00d9ff; bottom: -50px; right: -50px; animation-delay: 5s; }
+        .orb-3 { width: 250px; height: 250px; background: #ffbe0b; top: 50%; left: 50%; animation-delay: 10s; }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(30px, -30px) scale(1.1); }
+        }
+
+        /* Шрифт для заголовков */
+        .font-display {
+            font-family: 'Space Mono', monospace;
+            letter-spacing: -0.02em;
+            font-weight: 700;
+        }
+
+        /* Эффект свечения */
+        .glow-text {
+            animation: textGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes textGlow {
+            0%, 100% { text-shadow: 0 0 20px rgba(255, 0, 110, 0.3); }
+            50% { text-shadow: 0 0 40px rgba(0, 217, 255, 0.5); }
+        }
+
+        /* Плавный скролл */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Кнопки с эффектом */
+        .btn-modern {
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, #ff006e, #8338ec);
+            border: none;
+            color: white;
+            padding: 12px 32px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            z-index: 1;
+        }
+
+        .btn-modern::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+            z-index: -1;
+        }
+
+        .btn-modern:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn-modern:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(255, 0, 110, 0.4);
+        }
+
+        /* Карточки проектов */
+        .project-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
+            overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .project-card:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 0, 110, 0.5);
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(255, 0, 110, 0.2);
+        }
+
+        .project-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .project-card:hover::before {
+            left: 100%;
+        }
+
+        /* Счётчик с анимацией */
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ff006e, #00d9ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Навигация */
+        nav {
+            backdrop-filter: blur(10px);
+            background: rgba(15, 15, 15, 0.9);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 30px rgba(255, 0, 110, 0.1);
+        }
+
+        nav a {
+            position: relative;
+            transition: color 0.3s ease;
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #ff006e, #00d9ff);
+            transition: width 0.3s ease;
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        /* Меню мобильное */
+        .mobile-menu {
+            display: none;
+            position: fixed;
+            top: 60px;
+            left: 0;
+            right: 0;
+            background: rgba(15, 15, 15, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 50;
+        }
+
+        .mobile-menu.active {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .mobile-menu a {
+            padding: 16px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            gap: 6px;
+        }
+
+        .hamburger span {
+            width: 24px;
+            height: 2px;
+            background: white;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(8px, 8px);
+        }
+
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -7px);
+        }
+
+        @media (max-width: 768px) {
+            .hamburger {
+                display: flex;
+            }
+
+            nav .hidden {
+                display: none !important;
+            }
+
+            nav .flex:not(.hamburger) {
+                display: none;
+            }
+
+            .stat-number {
+                font-size: 2rem;
+            }
+
+            h1 {
+                font-size: 2.5rem !important;
+            }
+        }
+
+        /* Эффект появления при скролле */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Паттерны и текстуры */
+        .dot-grid {
+            background-image: 
+                radial-gradient(circle, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+            background-size: 30px 30px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Навигация с растянутым логотипом в 2K разрешении -->
+    <nav class="py-2 px-6 lg:px-12 flex justify-between items-center relative bg-gradient-to-r from-black via-gray-900 to-black">
+        <div class="flex items-center gap-8 flex-1 h-20 lg:h-24">
+            <!-- Логотип, растянутый на всю высоту хедера -->
+            <div class="cursor-pointer hover:opacity-90 transition-opacity h-full flex items-center">
+                <h2 class="font-display text-2xl lg:text-3xl font-bold bg-gradient-to-r from-white via-gray-100 to-white bg-clip-text text-transparent">VeChe</h2>
+            </div>
+            <div class="hidden lg:flex gap-8 ml-auto items-center h-full">
+                <a href="#portfolio" class="text-gray-300 hover:text-white text-sm transition-colors">Портфолио</a>
+                <a href="#about" class="text-gray-300 hover:text-white text-sm transition-colors">О студии</a>
+                <a href="#services" class="text-gray-300 hover:text-white text-sm transition-colors">Услуги</a>
+                <a href="#contacts" class="text-gray-300 hover:text-white text-sm transition-colors">Контакты</a>
+            </div>
+        </div>
+        <button class="hamburger" id="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+        <div class="mobile-menu" id="mobileMenu">
+            <a href="#portfolio">Портфолио</a>
+            <a href="#about">О студии</a>
+            <a href="#services">Услуги</a>
+            <a href="#contacts">Контакты</a>
+        </div>
+    </nav>
+
+    <!-- Hero секция -->
+    <section class="gradient-bg min-h-screen flex flex-col justify-center items-center px-6 py-20 lg:py-0 relative">
+        <div class="gradient-orb orb-1"></div>
+        <div class="gradient-orb orb-2"></div>
+        <div class="gradient-orb orb-3"></div>
+
+        <div class="text-center max-w-3xl mx-auto relative z-10">
+            <p class="text-sm lg:text-base text-transparent bg-clip-text bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 font-semibold mb-4 uppercase tracking-widest">
+                Цифровая визуализация
+            </p>
+            <h1 class="font-display text-4xl lg:text-7xl font-bold mb-6 leading-tight">
+                Трансформируем ваши идеи в<span class="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-cyan-500"> визуальную реальность</span>
+            </h1>
+            <p class="text-lg lg:text-xl text-gray-300 mb-12 leading-relaxed">
+                Архитектурная визуализация, 3D моделирование и анимация мирового уровня для вашего проекта
+            </p>
+            <button class="btn-modern text-base lg:text-lg mb-12">
+                Начать проект
+            </button>
+
+            <!-- Статистика -->
+            <div class="grid grid-cols-3 gap-8 mt-16 pt-16 border-t border-gray-700">
+                <div>
+                    <div class="stat-number">150+</div>
+                    <p class="text-gray-400 text-sm mt-2">Завершённых проектов</p>
+                </div>
+                <div>
+                    <div class="stat-number">50+</div>
+                    <p class="text-gray-400 text-sm mt-2">Довольных клиентов</p>
+                </div>
+                <div>
+                    <div class="stat-number">8+</div>
+                    <p class="text-gray-400 text-sm mt-2">Лет опыта</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Портфолио -->
+    <section id="portfolio" class="py-20 lg:py-32 px-6 lg:px-12 bg-black relative">
+        <div class="max-w-7xl mx-auto">
+            <div class="mb-16">
+                <p class="text-sm text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-cyan-500 font-semibold mb-4 uppercase">
+                    Наши работы
+                </p>
+                <h2 class="font-display text-4xl lg:text-5xl font-bold">
+                    Выбранные проекты
+                </h2>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Карточка проекта 1 -->
+                <div class="project-card h-64 lg:h-80 relative group">
+                    <div class="absolute inset-0 bg-gradient-to-br from-pink-500 to-purple-500 opacity-20"></div>
+                    <div class="p-8 h-full flex flex-col justify-between relative z-10">
+                        <h3 class="font-display text-2xl lg:text-3xl font-bold">Жилой комплекс<br/>&quot;Горизонт&quot;</h3>
+                        <p class="text-gray-300 text-sm">Архитектурная визуализация</p>
+                    </div>
+                </div>
+
+                <!-- Карточка проекта 2 -->
+                <div class="project-card h-64 lg:h-80 relative group">
+                    <div class="absolute inset-0 bg-gradient-to-br from-cyan-500 to-blue-500 opacity-20"></div>
+                    <div class="p-8 h-full flex flex-col justify-between relative z-10">
+                        <h3 class="font-display text-2xl lg:text-3xl font-bold">Торговый центр<br/>&quot;Град&quot;</h3>
+                        <p class="text-gray-300 text-sm">3D визуализация интерьера</p>
+                    </div>
+                </div>
+
+                <!-- Карточка проекта 3 -->
+                <div class="project-card h-64 lg:h-80 relative group">
+                    <div class="absolute inset-0 bg-gradient-to-br from-yellow-500 to-orange-500 opacity-20"></div>
+                    <div class="p-8 h-full flex flex-col justify-between relative z-10">
+                        <h3 class="font-display text-2xl lg:text-3xl font-bold">Офисный парк<br/>&quot;Teknos&quot;</h3>
+                        <p class="text-gray-300 text-sm">Корпоративная визуализация</p>
+                    </div>
+                </div>
+
+                <!-- Карточка проекта 4 -->
+                <div class="project-card h-64 lg:h-80 relative group">
+                    <div class="absolute inset-0 bg-gradient-to-br from-green-500 to-teal-500 opacity-20"></div>
+                    <div class="p-8 h-full flex flex-col justify-between relative z-10">
+                        <h3 class="font-display text-2xl lg:text-3xl font-bold">Ландшафтный<br/>проект &quot;Eden&quot;</h3>
+                        <p class="text-gray-300 text-sm">3D ландшафт-дизайн</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- О студии -->
+    <section id="about" class="py-20 lg:py-32 px-6 lg:px-12 bg-gradient-to-b from-black to-gray-950 dot-grid">
+        <div class="max-w-5xl mx-auto">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+                <div>
+                    <p class="text-sm text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-cyan-500 font-semibold mb-4 uppercase">
+                        О нас
+                    </p>
+                    <h2 class="font-display text-4xl lg:text-5xl font-bold mb-6">
+                        Студия полного цикла
+                    </h2>
+                    <p class="text-gray-300 text-lg leading-relaxed mb-6">
+                        Мы создаём инновационные визуальные решения для архитектурных и дизайнерских проектов. Наша команда объединяет лучших специалистов в сфере 3D визуализации, моделирования и анимации.
+                    </p>
+                    <ul class="space-y-4">
+                        <li class="flex items-center gap-3 text-gray-300">
+                            <span class="w-2 h-2 bg-gradient-to-r from-pink-500 to-cyan-500 rounded-full"></span>
+                            Современное оборудование и ПО
+                        </li>
+                        <li class="flex items-center gap-3 text-gray-300">
+                            <span class="w-2 h-2 bg-gradient-to-r from-pink-500 to-cyan-500 rounded-full"></span>
+                            Креативный подход к каждому проекту
+                        </li>
+                        <li class="flex items-center gap-3 text-gray-300">
+                            <span class="w-2 h-2 bg-gradient-to-r from-pink-500 to-cyan-500 rounded-full"></span>
+                            Быстрая обработка и высокое качество
+                        </li>
+                    </ul>
+                </div>
+                <div class="bg-gradient-to-br from-pink-500/20 to-cyan-500/20 rounded-2xl p-8 backdrop-blur-sm border border-gray-700">
+                    <div class="space-y-6">
+                        <div>
+                            <p class="text-sm text-gray-400 mb-2">Процесс работы</p>
+                            <div class="w-full bg-gray-800 rounded-full h-2">
+                                <div class="bg-gradient-to-r from-pink-500 to-cyan-500 h-2 rounded-full" style="width: 100%"></div>
+                            </div>
+                        </div>
+                        <p class="text-gray-300 text-sm leading-relaxed">
+                            От первичной консультации до финального рендера — мы проходим каждый этап с максимальной внимательностью к деталям
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Услуги -->
+    <section id="services" class="py-20 lg:py-32 px-6 lg:px-12 bg-black">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-16">
+                <p class="text-sm text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-cyan-500 font-semibold mb-4 uppercase">
+                    Что мы делаем
+                </p>
+                <h2 class="font-display text-4xl lg:text-5xl font-bold">
+                    Полный спектр услуг
+                </h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Услуга 1 -->
+                <div class="project-card p-8">
+                    <div class="text-4xl mb-4">🏗️</div>
+                    <h3 class="font-display text-xl font-bold mb-3">Архитектурная визуализация</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed">Профессиональные рендеры жилых и коммерческих объектов с максимальной реалистичностью</p>
+                </div>
+
+                <!-- Услуга 2 -->
+                <div class="project-card p-8">
+                    <div class="text-4xl mb-4">🎬</div>
+                    <h3 class="font-display text-xl font-bold mb-3">3D Анимация</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed">Динамичные видео-презентации и ролики для максимального эффекта</p>
+                </div>
+
+                <!-- Услуга 3 -->
+                <div class="project-card p-8">
+                    <div class="text-4xl mb-4">🎨</div>
+                    <h3 class="font-display text-xl font-bold mb-3">Дизайн интерьера</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed">Визуализация интерьерных решений и концептов в реальных пространствах</p>
+                </div>
+
+                <!-- Услуга 4 -->
+                <div class="project-card p-8">
+                    <div class="text-4xl mb-4">🌳</div>
+                    <h3 class="font-display text-xl font-bold mb-3">Ландшафт-дизайн</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed">3D визуализация ландшафтных проектов и озеленения территорий</p>
+                </div>
+
+                <!-- Услуга 5 -->
+                <div class="project-card p-8">
+                    <div class="text-4xl mb-4">📐</div>
+                    <h3 class="font-display text-xl font-bold mb-3">3D Моделирование</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed">Создание детальных 3D моделей для любых целей и специфик</p>
+                </div>
+
+                <!-- Услуга 6 -->
+                <div class="project-card p-8">
+                    <div class="text-4xl mb-4">✨</div>
+                    <h3 class="font-display text-xl font-bold mb-3">Пост-обработка</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed">Профессиональная колоррекция и обработка для идеального результата</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Наши клиенты -->
+    <section id="clients" class="py-20 lg:py-32 px-6 lg:px-12 bg-gradient-to-b from-black to-gray-950 relative">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16">
+                <p class="text-sm text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-cyan-500 font-semibold mb-4 uppercase tracking-widest">
+                    Доверие и успех
+                </p>
+                <h2 class="font-display text-4xl lg:text-5xl font-bold mb-6">
+                    Наши клиенты
+                </h2>
+                <p class="text-gray-400 text-lg max-w-2xl mx-auto">
+                    Крупные корпорации и инновационные стартапы доверяют нам визуализацию своих самых амбициозных проектов
+                </p>
+            </div>
+
+            <!-- Сетка клиентов -->
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-12">
+                <!-- Клиент 1 -->
+                <div class="group relative overflow-hidden rounded-xl bg-gradient-to-br from-gray-900 to-black border border-gray-800 p-6 hover:border-pink-500/50 transition-all duration-300 cursor-pointer">
+                    <div class="absolute inset-0 bg-gradient-to-r from-pink-500/0 via-pink-500/0 to-cyan-500/0 group-hover:from-pink-500/10 group-hover:to-cyan-500/10 transition-all duration-300"></div>
+                    <div class="relative z-10 flex flex-col items-center justify-center h-24">
+                        <div class="text-3xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">ARC</div>
+                        <p class="text-xs text-gray-500 mt-2">Архитектура</p>
+                    </div>
+                </div>
+
+                <!-- Клиент 2 -->
+                <div class="group relative overflow-hidden rounded-xl bg-gradient-to-br from-gray-900 to-black border border-gray-800 p-6 hover:border-cyan-500/50 transition-all duration-300 cursor-pointer">
+                    <div class="absolute inset-0 bg-gradient-to-r from-cyan-500/0 via-cyan-500/0 to-pink-500/0 group-hover:from-cyan-500/10 group-hover:to-pink-500/10 transition-all duration-300"></div>
+                    <div class="relative z-10 flex flex-col items-center justify-center h-24">
+                        <div class="text-3xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">BUILD</div>
+                        <p class="text-xs text-gray-500 mt-2">Девелопмент</p>
+                    </div>
+                </div>
+
+                <!-- Клиент 3 -->
+                <div class="group relative overflow-hidden rounded-xl bg-gradient-to-br from-gray-900 to-black border border-gray-800 p-6 hover:border-purple-500/50 transition-all duration-300 cursor-pointer">
+                    <div class="absolute inset-0 bg-gradient-to-r from-purple-500/0 via-purple-500/0 to-pink-500/0 group-hover:from-purple-500/10 group-hover:to-pink-500/10 transition-all duration-300"></div>
+                    <div class="relative z-10 flex flex-col items-center justify-center h-24">
+                        <div class="text-3xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">DESIGN</div>
+                        <p class="text-xs text-gray-500 mt-2">Дизайн</p>
+                    </div>
+                </div>
+
+                <!-- Клиент 4 -->
+                <div class="group relative overflow-hidden rounded-xl bg-gradient-to-br from-gray-900 to-black border border-gray-800 p-6 hover:border-cyan-500/50 transition-all duration-300 cursor-pointer">
+                    <div class="absolute inset-0 bg-gradient-to-r from-cyan-500/0 via-cyan-500/0 to-purple-500/0 group-hover:from-cyan-500/10 group-hover:to-purple-500/10 transition-all duration-300"></div>
+                    <div class="relative z-10 flex flex-col items-center justify-center h-24">
+                        <div class="text-3xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">URBAN</div>
+                        <p class="text-xs text-gray-500 mt-2">Градостроительство</p>
+                    </div>
+                </div>
+
+                <!-- Клиент 5 -->
+                <div class="group relative overflow-hidden rounded-xl bg-gradient-to-br from-gray-900 to-black border border-gray-800 p-6 hover:border-pink-500/50 transition-all duration-300 cursor-pointer">
+                    <div class="absolute inset-0 bg-gradient-to-r from-pink-500/0 via-pink-500/0 to-purple-500/0 group-hover:from-pink-500/10 group-hover:to-purple-500/10 transition-all duration-300"></div>
+                    <div class="relative z-10 flex flex-col items-center justify-center h-24">
+                        <div class="text-3xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">PRIME</div>
+                        <p class="text-xs text-gray-500 mt-2">Премиум сегмент</p>
+                    </div>
+                </div>
+
+                <!-- Клиент 6 -->
+                <div class="group relative overflow-hidden rounded-xl bg-gradient-to-br from-gray-900 to-black border border-gray-800 p-6 hover:border-orange-500/50 transition-all duration-300 cursor-pointer">
+                    <div class="absolute inset-0 bg-gradient-to-r from-orange-500/0 via-orange-500/0 to-pink-500/0 group-hover:from-orange-500/10 group-hover:to-pink-500/10 transition-all duration-300"></div>
+                    <div class="relative z-10 flex flex-col items-center justify-center h-24">
+                        <div class="text-3xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">INVEST</div>
+                        <p class="text-xs text-gray-500 mt-2">Инвестиции</p>
+                    </div>
+                </div>
+
+                <!-- Клиент 7 -->
+                <div class="group relative overflow-hidden rounded-xl bg-gradient-to-br from-gray-900 to-black border border-gray-800 p-6 hover:border-teal-500/50 transition-all duration-300 cursor-pointer">
+                    <div class="absolute inset-0 bg-gradient-to-r from-teal-500/0 via-teal-500/0 to-cyan-500/0 group-hover:from-teal-500/10 group-hover:to-cyan-500/10 transition-all duration-300"></div>
+                    <div class="relative z-10 flex flex-col items-center justify-center h-24">
+                        <div class="text-3xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">SPACE</div>
+                        <p class="text-xs text-gray-500 mt-2">Пространство</p>
+                    </div>
+                </div>
+
+                <!-- Клиент 8 -->
+                <div class="group relative overflow-hidden rounded-xl bg-gradient-to-br from-gray-900 to-black border border-gray-800 p-6 hover:border-pink-500/50 transition-all duration-300 cursor-pointer">
+                    <div class="absolute inset-0 bg-gradient-to-r from-pink-500/0 via-pink-500/0 to-cyan-500/0 group-hover:from-pink-500/10 group-hover:to-cyan-500/10 transition-all duration-300"></div>
+                    <div class="relative z-10 flex flex-col items-center justify-center h-24">
+                        <div class="text-3xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">NEXUS</div>
+                        <p class="text-xs text-gray-500 mt-2">Интеграция</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Статистика клиентов -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 pt-12 border-t border-gray-800">
+                <div class="text-center">
+                    <p class="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-pink-500 to-cyan-500 bg-clip-text text-transparent mb-2">500+</p>
+                    <p class="text-gray-400">Успешных проектов</p>
+                </div>
+                <div class="text-center">
+                    <p class="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-cyan-500 to-purple-500 bg-clip-text text-transparent mb-2">95%</p>
+                    <p class="text-gray-400">Рекомендаций клиентов</p>
+                </div>
+                <div class="text-center">
+                    <p class="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent mb-2">15+</p>
+                    <p class="text-gray-400">Лет на рынке</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Контакты / CTA -->
+    <section id="contacts" class="py-20 lg:py-32 px-6 lg:px-12 bg-gradient-to-t from-gray-950 to-black relative overflow-hidden">
+        <div class="absolute inset-0 dot-grid opacity-50"></div>
+        <div class="max-w-4xl mx-auto relative z-10">
+            <div class="text-center mb-12">
+                <p class="text-sm text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-cyan-500 font-semibold mb-4 uppercase">
+                    Давайте создадим
+                </p>
+                <h2 class="font-display text-4xl lg:text-5xl font-bold mb-6">
+                    Начните свой проект сегодня
+                </h2>
+                <p class="text-lg text-gray-300">
+                    Свяжитесь с нами и обсудите вашу идею
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16">
+                <div class="text-center">
+                    <p class="text-gray-400 text-sm mb-2">ПОЧТА</p>
+                    <a href="mailto:hello@vizustudio.com" class="font-display text-xl font-bold hover:text-transparent hover:bg-clip-text hover:bg-gradient-to-r hover:from-pink-500 hover:to-cyan-500 transition">
+                        hello@vizustudio.com
+                    </a>
+                </div>
+                <div class="text-center">
+                    <p class="text-gray-400 text-sm mb-2">ТЕЛЕФОН</p>
+                    <a href="tel:+79991234567" class="font-display text-xl font-bold hover:text-transparent hover:bg-clip-text hover:bg-gradient-to-r hover:from-pink-500 hover:to-cyan-500 transition">
+                        +7 999 123-45-67
+                    </a>
+                </div>
+                <div class="text-center">
+                    <p class="text-gray-400 text-sm mb-2">СОЦИАЛЬНЫЕ СЕТИ</p>
+                    <div class="flex justify-center gap-4">
+                        <a href="#" class="hover:text-pink-500 transition">TG</a>
+                        <a href="#" class="hover:text-cyan-500 transition">IN</a>
+                        <a href="#" class="hover:text-purple-500 transition">YT</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-16 text-center">
+                <button class="group relative inline-flex items-center justify-center px-8 py-3 lg:px-10 lg:py-4 text-base lg:text-lg font-semibold text-white rounded-full overflow-hidden transition-all duration-300">
+                    <div class="absolute inset-0 bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 group-hover:from-pink-600 group-hover:via-purple-600 group-hover:to-cyan-600"></div>
+                    <div class="absolute inset-0 opacity-0 group-hover:opacity-100 bg-white/10 transition-opacity duration-300"></div>
+                    <span class="relative">Оставить заявку</span>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="border-t border-gray-800 py-8 px-6 lg:px-12">
+        <div class="max-w-7xl mx-auto flex flex-col lg:flex-row justify-between items-center gap-8">
+            <p class="text-gray-500 text-sm">© 2025 VIZU Studio. Все права защищены.</p>
+            <div class="flex gap-8">
+                <a href="#" class="text-gray-500 hover:text-white text-sm transition">Политика конфиденциальности</a>
+                <a href="#" class="text-gray-500 hover:text-white text-sm transition">Условия использования</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Мобильное меню
+        const hamburger = document.getElementById('hamburger');
+        const mobileMenu = document.getElementById('mobileMenu');
+
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            mobileMenu.classList.toggle('active');
+        });
+
+        // Закрытие меню при клике на ссылку
+        document.querySelectorAll('#mobileMenu a').forEach(link => {
+            link.addEventListener('click', () => {
+                hamburger.classList.remove('active');
+                mobileMenu.classList.remove('active');
+            });
+        });
+
+        // Плавная анимация при скролле
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animation = 'fadeInUp 0.6s ease-out forwards';
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        // Наблюдаем за элементами
+        document.querySelectorAll('.project-card, .stat-number, h2').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            observer.observe(el);
+        });
+
+        // Интерактивные кнопки
+        document.querySelectorAll('.btn-modern').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const modal = document.createElement('div');
+                modal.className = 'fixed inset-0 bg-black/80 flex items-center justify-center z-50 px-4';
+                modal.innerHTML = `
+                    <div class="bg-gray-900 rounded-2xl p-8 max-w-md w-full border border-gray-700">
+                        <h3 class="font-display text-2xl font-bold mb-4">Свяжитесь с нами</h3>
+                        <form class="space-y-4">
+                            <input type="text" placeholder="Ваше имя" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-pink-500">
+                            <input type="email" placeholder="Ваша почта" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-pink-500">
+                            <textarea placeholder="Опишите проект" rows="4" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-pink-500"></textarea>
+                            <button type="button" class="w-full btn-modern py-3">Отправить</button>
+                        </form>
+                        <button onclick="this.closest('div').parentElement.remove()" class="absolute top-4 right-4 text-gray-500 hover:text-white">✕</button>
+                    </div>
+                `;
+                document.body.appendChild(modal);
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) modal.remove();
+                });
+            });
+        });
+
+        // Счётчик с анимацией для статистики
+        function animateCounter(element, target) {
+            let current = 0;
+            const increment = target / 30;
+            const interval = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    element.textContent = target + '+';
+                    clearInterval(interval);
+                } else {
+                    element.textContent = Math.floor(current) + '+';
+                }
+            }, 30);
+        }
+
+        // Запуск анимации счётчика при скролле до статистики
+        const statsObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    animateCounter(entry.target, parseInt(entry.target.textContent));
+                    statsObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.5 });
+
+        document.querySelectorAll('.stat-number').forEach(el => {
+            statsObserver.observe(el);
+        });
+    </script>
+</body>
+</html>
